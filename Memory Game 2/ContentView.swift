@@ -14,7 +14,10 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            cards
+            ScrollView {
+                cards
+            }
+            Spacer()
             cardCountAdjusters
         }
         .imageScale(.small)
@@ -31,9 +34,10 @@ struct ContentView: View {
         .font(.largeTitle)
     }
     var cards : some View {
-        HStack{
+        LazyVGrid(columns: [GridItem(),GridItem(),GridItem()]){
             ForEach(0..<cardCount, id: \.self) { index in
                 CardView(content: emojis[index])
+                    .aspectRatio(2/3, contentMode: .fit)
             }
         }
         .foregroundColor(.orange)
@@ -66,16 +70,15 @@ struct CardView: View {
     var body: some View {
         ZStack {
             let base = RoundedRectangle(cornerRadius: 12)
-            if isFaceup {
+            Group {
                 base.foregroundColor(.white)
                 base.strokeBorder(lineWidth: 2)
                 Text(content).font(.largeTitle)
-            } else {
-                base
-            }
+            }.opacity(isFaceup ? 1 : 0)
+            base.fill().opacity(isFaceup ? 0 : 1)
         }
         .onTapGesture {
-            isFaceup.toggle()
+            isFaceup = !isFaceup
         }
     }
 }		
